@@ -14,9 +14,6 @@ configure_uploads(app, photos)
 @app.route("/")
 def main():
 
-    #Debug
-    a = findspark.init("usr/local/spark/bin")
-
     return render_template("index.html")
 
 @app.route("/results")
@@ -37,6 +34,7 @@ def results():
         fruit_img = None #Initial fruit image default
 
         #Performs processing of the image
+        print("static/img/{}".format(result_img))
         abo_util = ABO("static/img/{}".format(result_img))
         fruit_text = abo_util.getFruitList()[0]
 

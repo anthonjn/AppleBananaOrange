@@ -18,7 +18,7 @@ class ABO():
     def __init__(self, path):
         self.listOfFruits = []
         #init spark
-        findspark.init("C:/Users/Ryanluu2017/Desktop")
+        findspark.init("/usr/local/spark")
 
         # Build the SparkSession
         spark = SparkSession.builder \
