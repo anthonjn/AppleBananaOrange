@@ -34,9 +34,11 @@ def results():
         fruit_img = None #Initial fruit image default
 
         #Performs processing of the image
+        '''
         print("static/img/{}".format(result_img))
         abo_util = ABO("static/img/{}".format(result_img))
         fruit_text = abo_util.getFruitList()[0]
+        '''
 
         if fruit_text == "Apple":
             fruit_img = "apple.jpg"
@@ -54,6 +56,7 @@ def handle_image():
 
     #Checks for a photo upload
     if request.method == "POST" and "photo" in request.files:
+        request.files["photo"].filename = str(hash(request.files["photo"].filename))+".jpg"
         filename = photos.save(request.files["photo"])
         return redirect(url_for("results",result_img = filename))
 
