@@ -6,49 +6,129 @@ from pyspark.sql import SparkSession
 import cv2
 import numpy as np
 
-#init spark
-findspark.init("/usr/local/spark")
 
-# Build the SparkSession
-spark = SparkSession.builder \
-   .master("local") \
-   .appName("Linear Regression Model") \
-   .config("spark.executor.memory", "1gb") \
-   .getOrCreate()
+class ABO():
+    '''
+    Input:
+        Call ABO('./Data/fruit-images-for-object-detection/test_zip/test')
+    
+    Output:
+        N/a
+    '''
+    def __init__(self, path):
+        self.listOfFruits = []
+        #init spark
+        findspark.init("/usr/local/spark")
+
+        # Build the SparkSession
+        spark = SparkSession.builder \
+        .master("local") \
+        .appName("Linear Regression Model") \
+        .config("spark.executor.memory", "1gb") \
+        .getOrCreate()
+        
+        sc = spark.sparkContext
+        RDDImages = sc.binaryFiles(path).collect()
+        #format: 
+        #   RDDImage[0] = path
+        #   RDDImage[1] = unicode? I think
+
+        testData = []
+
+        for path,uni in RDDImages:
+            file_bytes = np.asarray(bytearray(uni), dtype=np.uint8)
+            file_bytes = cv2.imdecode(file_bytes,1)
+            file_bytes = cv2.resize(file_bytes, (64,64))
+            testData.append(file_bytes)
+
+        testData = np.array(testData)
+        model = tf.keras.models.load_model('./AppleBanannaOrange.h5')
+        prediction = model.predict(testData, batch_size = 4)
+        self.getFruitNames(prediction)
+
+    '''
+    Input:
+        Numpy arr with translated images
+    Outpu:  
+        N/a
+            Augments list of fruit names corresponding to the images 
+    '''
+    def getFruitNames(self, numpyArr):
+        for arr in numpyArr:
+            max_value = max(arr)
+            max_index = np.where(arr == max_value)
+            if max_index[0] == 0:
+                self.listOfFruits.append('Apple')
+            elif max_index[0] == 1:
+                self.listOfFruits.append('Banana')
+            else:
+                self.listOfFruits.append('Orange')
+    '''
+    Input:
+        N/a
+    Output:
+        returns the list of fruits
+    '''
+    def getFruitList(self):
+        return self.listOfFruits
+
+
+#HOW TO USE THE CLASS/FUNCTION:
+Ab = ABO('./Data/fruit-images-for-object-detection/test_zip/test/apple_77.jpg')
+print(Ab.getFruitList())
+
+# #init spark
+# findspark.init("/usr/local/spark")
+
+# # Build the SparkSession
+# spark = SparkSession.builder \
+#    .master("local") \
+#    .appName("Linear Regression Model") \
+#    .config("spark.executor.memory", "1gb") \
+#    .getOrCreate()
    
-sc = spark.sparkContext
+# sc = spark.sparkContext
 
-# RDDImages = sc.binaryFiles(r'./Data/fruit-images-for-object-detection/test_zip/test').take(1)
-# #RDDImages is an RDD right now, we need to change it to dataframe
-# print(type(RDDImages))
-# print(RDDImages)
+# # RDDImages = sc.binaryFiles(r'./Data/fruit-images-for-object-detection/test_zip/test').take(1)
+# # #RDDImages is an RDD right now, we need to change it to dataframe
+# # print(type(RDDImages))
+# # print(RDDImages)
+# # #format: 
+# # #   RDDImage[0] = path
+# # #   RDDImage[1] = unicode? I think
+# # file_bytes = np.asarray(bytearray(RDDImages[0][1]), dtype=np.uint8)
+# # print(RDDImages[0][0])
+# # R = cv2.imdecode(file_bytes,1)
+# # print(R)
+# # print(type(R))
+# # print(R.shape)
+# # prints out correct cv2 item. 
+
+# RDDImages = sc.binaryFiles(r'./Data/fruit-images-for-object-detection/test_zip/test').collect()
 # #format: 
 # #   RDDImage[0] = path
 # #   RDDImage[1] = unicode? I think
-# file_bytes = np.asarray(bytearray(RDDImages[0][1]), dtype=np.uint8)
-# print(RDDImages[0][0])
-# R = cv2.imdecode(file_bytes,1)
-# print(R)
-# print(type(R))
-# print(R.shape)
-# prints out correct cv2 item. 
+# testData = []
+# url = []
 
-RDDImages = sc.binaryFiles(r'./Data/fruit-images-for-object-detection/test_zip/test').take(2)
-#format: 
-#   RDDImage[0] = path
-#   RDDImage[1] = unicode? I think
-testData = []
+# for path,uni in RDDImages:
+#     file_bytes = np.asarray(bytearray(uni), dtype=np.uint8)
+#     file_bytes = cv2.imdecode(file_bytes,1)
+#     file_bytes = cv2.resize(file_bytes, (64,64))
+#     testData.append(file_bytes)
+#     url.append(path[-13:])
 
-for path,uni in RDDImages:
-    file_bytes = np.asarray(bytearray(uni), dtype=np.uint8)
-    file_bytes = cv2.imdecode(file_bytes,1)
-    file_bytes = cv2.resize(file_bytes, (64,64))
-    testData.append(file_bytes)
-    print(path)
-testData = np.array(testData)
-model = tf.keras.models.load_model('./AppleBanannaOrange.h5')
-prediction = model.predict(testData, batch_size = 1)
-print(prediction) 
+# testData = np.array(testData)
+# model = tf.keras.models.load_model('./AppleBanannaOrange.h5')
+# prediction = model.predict(testData, batch_size = 4)
+
+# for item in prediction:
+#     print(item)
+# for url, arr in zip(url,prediction):
+#     print("URL: ", url, "prediction: ", arr)
+#     print(arr[0])
+#     print(arr[1])
+#     print(arr[2])
 
 
 
