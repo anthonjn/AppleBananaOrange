@@ -1,0 +1,6 @@
+flask
+pyspark
+findspark
+tensorflow
+cv2
+numpy
