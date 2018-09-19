@@ -1,7 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_uploads import UploadSet, configure_uploads, IMAGES
+from SparkAppleOrange import ABO
+import findspark
 
-#Initializes the app
+#Initializes the app and dependency classes
 app = Flask(__name__)
 
 #Configures upload settings for images
@@ -11,6 +13,10 @@ configure_uploads(app, photos)
 
 @app.route("/")
 def main():
+
+    #Debug
+    a = findspark.init("usr/local/spark/bin")
+
     return render_template("index.html")
 
 @app.route("/results")
@@ -29,6 +35,10 @@ def results():
     else:
         fruit_text = None #Put ML function call here
         fruit_img = None #Initial fruit image default
+
+        #Performs processing of the image
+        abo_util = ABO("static/img/{}".format(result_img))
+        fruit_text = abo_util.getFruitList()[0]
 
         if fruit_text == "Apple":
             fruit_img = "apple.jpg"

@@ -18,7 +18,7 @@ class ABO():
     def __init__(self, path):
         self.listOfFruits = []
         #init spark
-        findspark.init("/usr/local/spark")
+        findspark.init("C:/Users/Ryanluu2017/Desktop")
 
         # Build the SparkSession
         spark = SparkSession.builder \
@@ -83,9 +83,11 @@ class ABO():
 
 
 #HOW TO USE THE CLASS/FUNCTION:
-Ab = ABO('./Data/fruit-images-for-object-detection/test_zip/apple.jpg')
-print(Ab.getFruitList())
-print(Ab.getPrediction())
+
+if __name__ =="__main__":
+    Ab = ABO('./Data/fruit-images-for-object-detection/test_zip/apple.jpg')
+    print(Ab.getFruitList())
+    print(Ab.getPrediction())
 
 # #init spark
 # findspark.init("/usr/local/spark")
