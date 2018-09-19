@@ -43,8 +43,8 @@ class ABO():
 
         testData = np.array(testData)
         model = tf.keras.models.load_model('./AppleBanannaOrange.h5')
-        prediction = model.predict(testData, batch_size = 4)
-        self.getFruitNames(prediction)
+        self.prediction = model.predict(testData, batch_size = 4)
+        self.getFruitNames(self.prediction)
 
     '''
     Input:
@@ -72,10 +72,20 @@ class ABO():
     def getFruitList(self):
         return self.listOfFruits
 
+    '''
+    Input:
+        N/a
+    Output:
+        returns the list of predictions
+    '''
+    def getPrediction(self):
+        return self.prediction
+
 
 #HOW TO USE THE CLASS/FUNCTION:
-Ab = ABO('./Data/fruit-images-for-object-detection/test_zip/test/apple_77.jpg')
+Ab = ABO('./Data/fruit-images-for-object-detection/test_zip/apple.jpg')
 print(Ab.getFruitList())
+print(Ab.getPrediction())
 
 # #init spark
 # findspark.init("/usr/local/spark")
