@@ -1,6 +1,8 @@
 flask
+Flask-Uploads
 pyspark
 findspark
 tensorflow
-cv2
+keras
+opencv-python
 numpy
