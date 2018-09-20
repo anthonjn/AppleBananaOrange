@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_uploads import UploadSet, configure_uploads, IMAGES
-from SparkAppleOrange import ABO
+from SparkRottenFreshApple import SRFA
 import findspark
 
 #Initializes the app and dependency classes
@@ -10,6 +10,9 @@ app = Flask(__name__)
 photos = UploadSet('photos',IMAGES)
 app.config['UPLOADED_PHOTOS_DEST'] = 'static/img'
 configure_uploads(app, photos)
+
+#Init Spark node + ml model
+srfa = SRFA()
 
 @app.route("/")
 def main():
@@ -39,15 +42,12 @@ def results():
         abo_util = ABO("static/img/{}".format(result_img))
         fruit_text = abo_util.getFruitList()[0]
         '''
+        fruit_state = srfa.getFruitState("static/img/{}".format(result_img))[0]
 
-        if fruit_text == "Apple":
-            fruit_img = "apple.jpg"
-
-        elif fruit_text == "Orange":
-            fruit_img = "orange.jpg"
-
-        elif fruit_text == "Banana":
-            fruit_img = "banana.jpg"
+        if(fruit_state == "Rotten"):
+            fruit_img = "rottenApple.jpg"
+        elif(fruit_state == "Fresh"):
+            fruit_img = "freshApple.jpg"
 
         return render_template("results.html",result_text = fruit_text, result_img = "static/img/{}".format(fruit_img))
 
